@@ -1,40 +1,24 @@
-mov ah, 0x0e
-mov al, 'H'
-int 0x10
-mov ah, 0x0e
-mov al, 'e'
-int 0x10
-mov ah, 0x0e
-mov al, 'l'
-int 0x10
-mov ah, 0x0e
-mov al, 'l'
-int 0x10
-mov ah, 0x0e
-mov al, 'o'
-int 0x10
-mov ah, 0x0e
-mov al, ','
-int 0x10
-mov ah, 0x0e
-mov al, 'w'
-int 0x10
-mov ah, 0x0e
-mov al, 'o'
-int 0x10
-mov ah, 0x0e
-mov al, 'r'
-int 0x10
-mov ah, 0x0e
-mov al, 'l'
-int 0x10
-mov ah, 0x0e
-mov al, 'd'
-int 0x10
-mov ah, 0x0e
-mov al, '.'
-int 0x10
-jmp $
+[org 0x7c00]
+
+mov bx, 0x7e00
+
+mov ah, 0x02
+mov al, 1
+mov ch, 0
+mov cl, 2
+mov dh, 0
+mov dl, 0x80
+int 0x13
+
+jc disk_error
+
+jmp 0x0000:0x7e00
+
+disk_error:
+    mov ah, 0x0e
+    mov al, 'E'
+    int 0x10
+    jmp $
 
 times 510-($-$$) db 0
-db 0x55, 0xaa
+dw 0xaa55
