@@ -6,13 +6,15 @@ void printl(const char* chars);
 void splash();
 void scroll();
 void clear_line(int x);
-void clear_screen();
-int cursor_row = 0;
+void cint cursor_row = 0;
+lear_screen();
 int cursor_col = 0;
 //====================================
 extern "C" void main() {
     splash();
-    while (1) {}
+    while (1) {
+
+    }
 }
 
 void print(const char chars[], int len) {
