@@ -2,7 +2,8 @@
 #include <stdint.h>
 
 //====================================
-void print(const char chars[], int len);
+void new_line();
+void print(const char chars[]);
 void printl(const char chars[]);
 char translate(char scancode);
 void splash();
@@ -18,16 +19,21 @@ void addChar(char *s, char c);
 extern void main() {
     uint16_t* v_mem = (uint16_t*)0xB8000;
     splash();
-    while(1) {
+    print(">_");
+    while (1) {
     uint8_t scancode = read_ps2_port();
 
+    if (scancode & 0x80) continue;
+    if (scancode == 0x1c) {
+        new_line();
+        print(">_");
+        continue;
+    }
     char letter = translate(scancode);
 
-    char out[2];
-    out[0] = letter;
-    out[1] = '\0';
+    char out[2] = { letter, '\0' };
 
-    printl(out);
+    print(out);
 }
 }
 void addChar(char *s, char c) {
@@ -36,7 +42,7 @@ void addChar(char *s, char c) {
 }
 
 char translate(char scancode){
-    if (scancode == 0x1C) return 'A';
+    if (scancode == 0x1E) return 'A';
     if (scancode == 0x30) return 'B';
     if (scancode == 0x2E) return 'C';
     if (scancode == 0x20) return 'D';
@@ -51,7 +57,7 @@ char translate(char scancode){
     if (scancode == 0x32) return 'M';
     if (scancode == 0x31) return 'N';
     if (scancode == 0x18) return 'O';
-    if (scancode == 0x4D) return 'P';
+    if (scancode == 0x19) return 'P';
     if (scancode == 0x10) return 'Q';
     if (scancode == 0x13) return 'R';
     if (scancode == 0x1F) return 'S';
@@ -92,7 +98,7 @@ static inline void io_wait(void)
 }
 
 
-void print(const char chars[], int len) {
+void print(const char chars[]) {
     uint16_t* v_mem = (uint16_t*) 0xB8000;
 
     for (int i = 0; chars[i] != '\0'; i++) {
@@ -122,7 +128,7 @@ void new_line() {
 }
 
 void printl(const char chars[]) {
-    print(chars, 0);
+    print(chars);
     new_line();
 }
 
