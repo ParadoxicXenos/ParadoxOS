@@ -1,11 +1,10 @@
 //====================================
 #include <stdint.h>
 
-#define WIDTH 80
-#define HEIGHT 25
 //====================================
 void print(const char chars[], int len);
-void printl(const char chars[], int len);
+void printl(const char chars[]);
+char translate(char scancode);
 void splash();
 void scroll();
 void clear_line(int x);
@@ -14,20 +13,59 @@ void clear_screen();
 uint8_t read_ps2_port();
 int cursor_col = 0;
 static inline void io_wait(void);
+void addChar(char *s, char c);
 //====================================
 extern void main() {
-    splash()
+    uint16_t* v_mem = (uint16_t*)0xB8000;
+    splash();
     while(1) {
- //       char scancode[2];
-  //      scancode[0] = (char) read_ps2_port();
-    //    scancode[1] = '\0';
-      //  printl(scancode);
-    }
+    uint8_t scancode = read_ps2_port();
+
+    char letter = translate(scancode);
+
+    char out[2];
+    out[0] = letter;
+    out[1] = '\0';
+
+    printl(out);
+}
+}
+void addChar(char *s, char c) {
+    while (*s++);
+    *(s - 1) = c;
 }
 
-static inline uint8_t inb(uint16_t port)
+char translate(char scancode){
+    if (scancode == 0x1C) return 'A';
+    if (scancode == 0x30) return 'B';
+    if (scancode == 0x2E) return 'C';
+    if (scancode == 0x20) return 'D';
+    if (scancode == 0x12) return 'E';
+    if (scancode == 0x21) return 'F';
+    if (scancode == 0x22) return 'G';
+    if (scancode == 0x23) return 'H';
+    if (scancode == 0x17) return 'I';
+    if (scancode == 0x24) return 'J';
+    if (scancode == 0x25) return 'K';
+    if (scancode == 0x26) return 'L';
+    if (scancode == 0x32) return 'M';
+    if (scancode == 0x31) return 'N';
+    if (scancode == 0x18) return 'O';
+    if (scancode == 0x4D) return 'P';
+    if (scancode == 0x10) return 'Q';
+    if (scancode == 0x13) return 'R';
+    if (scancode == 0x1F) return 'S';
+    if (scancode == 0x14) return 'T';
+    if (scancode == 0x16) return 'U';
+    if (scancode == 0x2F) return 'V';
+    if (scancode == 0x11) return 'W';
+    if (scancode == 0x2D) return 'X';
+    if (scancode == 0x15) return 'Y';
+    if (scancode == 0x2C) return 'Z';
+    return '?';
+}
 
-{
+static inline uint8_t inb(uint16_t port){
     uint8_t ret;
     __asm__ volatile ( "inb %w1, %b0"
                    : "=a"(ret)
@@ -57,16 +95,20 @@ static inline void io_wait(void)
 void print(const char chars[], int len) {
     uint16_t* v_mem = (uint16_t*) 0xB8000;
 
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; chars[i] != '\0'; i++) {
         int cursor_pos = cursor_row * 80 + cursor_col;
+
         v_mem[cursor_pos] = (0x09 << 8) | (chars[i] & 0xFF);
+
         cursor_col++;
-        if (cursor_col >= WIDTH) {
+
+        if (cursor_col >= 80) {
             cursor_col = 0;
             cursor_row++;
-        if (cursor_row >= HEIGHT) {
-            scroll();
         }
+
+        if (cursor_row >= 25) {
+            scroll();
         }
     }
 }
@@ -79,19 +121,19 @@ void new_line() {
     }
 }
 
-void printl(const char chars[], int len) {
-    print(chars, len);
+void printl(const char chars[]) {
+    print(chars, 0);
     new_line();
 }
 
 void splash(){
-    printl("______                   _           _____ _____ ",49);
-    printl("| ___ \\                 | |         |  _  /  ___|",50);
-    printl("| |_/ /_ _ _ __ __ _  __| | _____  _| | | \\ `--. ",50);
-    printl("|  __/ _` | '__/ _` |/ _` |/ _ \\ \\/ / | | |`--. \\",52);
-    printl("| | | (_| | | | (_| | (_| | (_) >  <\\ \\_/ /\\__/ /",52);
-    printl("\\_|  \\__,_|_|  \\__,_|\\__,_|\\___/_/\\_\\\\___/\\____/",57);
-    printl("Hello, world!",13);
+    printl("______                   _           _____ _____ ");
+    printl("| ___ \\                 | |         |  _  /  ___|");
+    printl("| |_/ /_ _ _ __ __ _  __| | _____  _| | | \\ `--. ");
+    printl("|  __/ _` | '__/ _` |/ _` |/ _ \\ \\/ / | | |`--. \\");
+    printl("| | | (_| | | | (_| | (_| | (_) >  <\\ \\_/ /\\__/ /");
+    printl("\\_|  \\__,_|_|  \\__,_|\\__,_|\\___/_/\\_\\\\___/\\____/");
+    printl("Hello, world!");
 }
 
 void scroll(){
