@@ -19,14 +19,24 @@ void addChar(char *s, char c);
 extern void main() {
     uint16_t* v_mem = (uint16_t*)0xB8000;
     splash();
-    print(">_");
+    print(">  ");
     while (1) {
     uint8_t scancode = read_ps2_port();
 
     if (scancode & 0x80) continue;
+    if (scancode == 0x0E) {
+        if (cursor_col<=3){
+            continue;
+        }
+        else{
+            cursor_col--;
+            v_mem[cursor_row * 80 + cursor_col] = (0x09 << 8) | ' ';
+        }
+        continue;
+    }
     if (scancode == 0x1c) {
         new_line();
-        print(">_");
+        print(">  ");
         continue;
     }
     char letter = translate(scancode);
@@ -140,6 +150,7 @@ void splash(){
     printl("| | | (_| | | | (_| | (_| | (_) >  <\\ \\_/ /\\__/ /");
     printl("\\_|  \\__,_|_|  \\__,_|\\__,_|\\___/_/\\_\\\\___/\\____/");
     printl("Hello, world!");
+    printl("This program was made by ParadoxicXenos");
 }
 
 void scroll(){
