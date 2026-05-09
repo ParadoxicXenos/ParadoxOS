@@ -19,6 +19,10 @@ void read_line();
 void help();
 char line[80];
 int stringComp(char a[], char b[]);
+char username[] = "USER";
+char password[] = "PASS";
+int logged_in = 0;
+void login();
 //====================================
 extern void main() {
     uint16_t* v_mem = (uint16_t*)0xB8000;
@@ -40,7 +44,12 @@ extern void main() {
     if (scancode == 0x1c) {
         read_line();
         new_line();
-        if (stringComp(line, "HELP")) help();
+        if (stringComp(line, "HELP")){
+            if (!logged_in) {
+                printl("Please login to do anything")
+            }
+            help();
+        }
         else print(line), printl(" is not recognised as an operable command");
         print(">  ");
         continue;
@@ -52,9 +61,36 @@ extern void main() {
     print(out);
 }
 }
+void login() {
+    while (1) {
+        printl("Enter username:");
+        print("> ");
+        if (scancode == 0x1c){
+            read_line();
+        }
+            if (stringComp(line, username)) {
+            break;
+        }
+    }
+
+    while (1) {
+        printl("Enter password:");
+        print("> ");
+        if (scancode == 0x1c){
+
+
+        read_line();
+        if (stringComp(line, password)) {
+            break;
+        }
+    }
+
+    logged_in = 1;
+}
 void help(){
     printl("Commands:");
     printl("HELP : Displays list of commands");
+    printl("LOGIN : Initialises the login prompt")
 }
 
 void addChar(char *s, char c) {
@@ -218,3 +254,4 @@ int stringComp(char a[], char b[]){
     return a[i] == b[i];
 
 }
+
