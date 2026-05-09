@@ -44,11 +44,22 @@ extern void main() {
     if (scancode == 0x1c) {
         read_line();
         new_line();
+        
         if (stringComp(line, "HELP")){
-            if (!logged_in) {
-                printl("Please login to do anything")
-            }
             help();
+            print(">  ");
+            continue;
+        }
+        if (stringComp(line, "CLEAR")){
+            clear_screen();
+            splash();
+            print(">  ");
+            continue;
+        }
+        if (stringComp(line, "LOGIN")){
+            login();
+            print(">  ");
+            continue;
         }
         else print(line), printl(" is not recognised as an operable command");
         print(">  ");
@@ -61,36 +72,12 @@ extern void main() {
     print(out);
 }
 }
-void login() {
-    while (1) {
-        printl("Enter username:");
-        print("> ");
-        if (scancode == 0x1c){
-            read_line();
-        }
-            if (stringComp(line, username)) {
-            break;
-        }
-    }
 
-    while (1) {
-        printl("Enter password:");
-        print("> ");
-        if (scancode == 0x1c){
-
-
-        read_line();
-        if (stringComp(line, password)) {
-            break;
-        }
-    }
-
-    logged_in = 1;
-}
 void help(){
     printl("Commands:");
     printl("HELP : Displays list of commands");
-    printl("LOGIN : Initialises the login prompt")
+    printl("CLEAR : Clears the screens content");
+    printl("LOGIN,[USERNAME],[PASSWORD] : Log into an account");
 }
 
 void addChar(char *s, char c) {
@@ -139,6 +126,17 @@ char translate(char scancode){
     if (scancode == 0x15) return 'Y';
     if (scancode == 0x2C) return 'Z';
     if (scancode == 0x39) return ' ';
+    if (scancode == 0x33) return ',';
+    if (scancode == 0x02) return '1';
+    if (scancode == 0x03) return '2';
+    if (scancode == 0x04) return '3';
+    if (scancode == 0x05) return '4';
+    if (scancode == 0x06) return '5';
+    if (scancode == 0x07) return '6';
+    if (scancode == 0x08) return '7';
+    if (scancode == 0x09) return '8';
+    if (scancode == 0x0A) return '9';
+    if (scancode == 0x0B) return '0';
     return '?';
 }
 
@@ -238,6 +236,14 @@ void clear_screen(){
     for (int y = 0; y < 25; y++){
         clear_line(y);
     }
+    cursor_row = 0;
+    cursor_col = 0;
+}
+
+void login(){
+    // Login system go here
+    print("Logged in as ");
+    //printl(username);
 }
 
 int stringComp(char a[], char b[]){
