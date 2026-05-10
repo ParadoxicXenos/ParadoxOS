@@ -25,7 +25,7 @@ void login(char user[],char pass[]);
 void splitString(char string[], char delim, char result[10][80]);
 void whoAmI();
 void stringCopy(char dest[], char src[]);
-void createUser(char usernameInput[], char passwordInput[], char adminInput[]);
+void createUser(char usernameInput[], char passwordInput[]);
 struct userList {
     char username[80];
     char password[80];
@@ -104,7 +104,7 @@ void help(){
     printLine("CLEAR : Clears the screens content");
     printLine("LOGIN,[USERNAME],[PASSWORD] : Log into an account");
     printLine("WHOAMI : Lists your accounts details.");
-    printLine("USERCREATE,[USERNAME],[PASSWORD],[ISADMIN] : Create an account");
+    printLine("USERCREATE,[USERNAME],[PASSWORD] : Create an account");
 }
 
 void addChar(char *s, char c) {
@@ -300,6 +300,7 @@ void login(char userInput[], char passInput[]) {
             splash();
             print("Logged in as ");
             printLine(currentUser);
+            return;
         }
     }
 
@@ -338,7 +339,7 @@ void stringCopy(char dest[], char src[]) {
     }
     dest[i] = '\0';
 }
-void createUser(char usernameInput[], char passwordInput[], char adminInput[]) {
+void createUser(char usernameInput[], char passwordInput[]) {
 
     stringCopy(users[userCount].username, usernameInput);
     stringCopy(users[userCount].password, passwordInput);
