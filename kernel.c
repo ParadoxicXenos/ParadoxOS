@@ -2,61 +2,62 @@
 #include <stdint.h>
 
 //====================================
-void new_line();
+void newLine();
 void print(const char chars[]);
-void printl(const char chars[]);
+void printLine(const char chars[]);
 char translate(char scancode);
 void splash();
 void scroll();
-void clear_line(int x);
-int cursor_row = 0;
-void clear_screen();
-uint8_t read_ps2_port();
-int cursor_col = 0;
-static inline void io_wait(void);
+void clearLine(int x);
+int cursorRow = 0;
+void clearScreen();
+uint8_t readPs2Port();
+int cursorCol = 0;
+static inline void ioWait(void);
 void addChar(char *s, char c);
-void read_line();
+void readLine();
 void help();
 char line[80];
 int stringComp(char a[], char b[]);
-char username[] = "USER";
-char password[] = "PASS";
-int logged_in = 0;
-char current_user[80];
+char username[80]="USER";
+char password[80]="PASS";
+int loggedIn = 0;
+char currentUser[80];
 void login(char user[],char pass[]);
-void split_string(char string[], char delim, char result[10][80]);
-void whoami();
+void splitString(char string[], char delim, char result[10][80]);
+void whoAmI();
 void stringCopy(char dest[], char src[]);
+void createUser(char user[], char pass[]);
 //====================================
 extern void main() {
     uint16_t* v_mem = (uint16_t*)0xB8000;
     splash();
     print(">  ");
     while (1) {
-    uint8_t scancode = read_ps2_port();        
+    uint8_t scancode = readPs2Port();        
     if (scancode & 0x80) continue;
     if (scancode == 0x0E) {
-        if (cursor_col<=3){
+        if (cursorCol<=3){
             continue;
         }
         else{
-            cursor_col--;
-            v_mem[cursor_row * 80 + cursor_col] = (0x09 << 8) | ' ';
+            cursorCol--;
+            v_mem[cursorRow * 80 + cursorCol] = (0x09 << 8) | ' ';
         }
         continue;
     }
     if (scancode == 0x1c) {
-        read_line();
-        new_line();
+        readLine();
+        newLine();
         char parts[10][80];
-        split_string(line,',',parts);
+        splitString(line,',',parts);
         if (stringComp(line, "HELP")){
             help();
             print(">  ");
             continue;
         }
         if (stringComp(line, "CLEAR")){
-            clear_screen();
+            clearScreen();
             splash();
             print(">  ");
             continue;
@@ -66,14 +67,19 @@ extern void main() {
             print(">  ");
             continue;
         }
-        if (stringComp(line, "WHOAMI")) {
-            whoami();
+        if (stringComp(parts[0], "USERCREATE")) {
+            createUser(parts[1], parts[2]);
+            print(">  ");
+            continue;
+        }
+        if (stringComp(line, "whoAmI")) {
+            whoAmI();
             print(">  ");
             continue;
         }
         else{
         print(line);
-        printl(" is not recognised as an operable command");
+        printLine(" is not recognised as an operable command");
         print(">  ");
         continue;
         }
@@ -87,11 +93,12 @@ extern void main() {
 }
 
 void help(){
-    printl("Commands:");
-    printl("HELP : Displays list of commands");
-    printl("CLEAR : Clears the screens content");
-    printl("LOGIN,[USERNAME],[PASSWORD] : Log into an account");
-    printl("WHOAMI : Lists your accounts details.");
+    printLine("Commands:");
+    printLine("HELP : Displays list of commands");
+    printLine("CLEAR : Clears the screens content");
+    printLine("LOGIN,[USERNAME],[PASSWORD] : Log into an account");
+    printLine("whoAmI : Lists your accounts details.");
+    printLine("USERCREATE,[USERNAME],[PASSWORD] : Create an account");
 }
 
 void addChar(char *s, char c) {
@@ -102,7 +109,7 @@ void addChar(char *s, char c) {
 
     *s = '\0';
 }
-void split_string(char string[], char delim, char result[10][80]){
+void splitString(char string[], char delim, char result[10][80]){
     int pos;
     int word = 0;
     int char_pos = 0;
@@ -124,12 +131,12 @@ void split_string(char string[], char delim, char result[10][80]){
         }
     }
 }
-void read_line(){
+void readLine(){
     uint16_t* v_mem = (uint16_t*)0xB8000;
     line[0] = '\0';
 
-    for (int y = 3; y < cursor_col; y++){
-        char letter = v_mem[cursor_row * 80 + y] & 0xFF;
+    for (int y = 3; y < cursorCol; y++){
+        char letter = v_mem[cursorRow * 80 + y] & 0xFF;
 
         addChar(line, letter);
     }
@@ -185,7 +192,7 @@ static inline uint8_t inb(uint16_t port){
     return ret;
 }
 
-uint8_t read_ps2_port() {
+uint8_t readPs2Port() {
     while (!(inb(0x64) & 1));
 
     return inb(0x60);
@@ -197,7 +204,7 @@ static inline void outb(uint16_t port, uint8_t val)
 
 }
 
-static inline void io_wait(void)
+static inline void ioWait(void)
 {
     outb(0x80, 0);
 }
@@ -207,45 +214,45 @@ void print(const char chars[]) {
     uint16_t* v_mem = (uint16_t*) 0xB8000;
 
     for (int i = 0; chars[i] != '\0'; i++) {
-        int cursor_pos = cursor_row * 80 + cursor_col;
+        int cursor_pos = cursorRow * 80 + cursorCol;
 
         v_mem[cursor_pos] = (0x09 << 8) | (chars[i] & 0xFF);
 
-        cursor_col++;
+        cursorCol++;
 
-        if (cursor_col >= 80) {
-            cursor_col = 0;
-            cursor_row++;
+        if (cursorCol >= 80) {
+            cursorCol = 0;
+            cursorRow++;
         }
 
-        if (cursor_row >= 25) {
+        if (cursorRow >= 25) {
             scroll();
         }
     }
 }
 
-void new_line() {
-    cursor_row++;
-    cursor_col = 0;
-    if (cursor_row >= 25) {
+void newLine() {
+    cursorRow++;
+    cursorCol = 0;
+    if (cursorRow >= 25) {
         scroll();
     }
 }
 
-void printl(const char chars[]) {
+void printLine(const char chars[]) {
     print(chars);
-    new_line();
+    newLine();
 }
 
 void splash(){
-    printl("______                   _           _____ _____ ");
-    printl("| ___ \\                 | |         |  _  /  ___|");
-    printl("| |_/ /_ _ _ __ __ _  __| | _____  _| | | \\ `--. ");
-    printl("|  __/ _` | '__/ _` |/ _` |/ _ \\ \\/ / | | |`--. \\");
-    printl("| | | (_| | | | (_| | (_| | (_) >  <\\ \\_/ /\\__/ /");
-    printl("\\_|  \\__,_|_|  \\__,_|\\__,_|\\___/_/\\_\\\\___/\\____/");
-    printl("Hello, world!");
-    printl("This program was made by ParadoxicXenos");
+    printLine("______                   _           _____ _____ ");
+    printLine("| ___ \\                 | |         |  _  /  ___|");
+    printLine("| |_/ /_ _ _ __ __ _  __| | _____  _| | | \\ `--. ");
+    printLine("|  __/ _` | '__/ _` |/ _` |/ _ \\ \\/ / | | |`--. \\");
+    printLine("| | | (_| | | | (_| | (_| | (_) >  <\\ \\_/ /\\__/ /");
+    printLine("\\_|  \\__,_|_|  \\__,_|\\__,_|\\___/_/\\_\\\\___/\\____/");
+    printLine("Hello, world!");
+    printLine("This program was made by ParadoxicXenos");
 }
 
 void scroll(){
@@ -256,11 +263,11 @@ void scroll(){
             v_mem[(i-1) * 80 + x] = v_mem[i * 80 + x];
         }
     }
-    clear_line(24);
-    cursor_row = 24;
-    cursor_col = 0;
+    clearLine(24);
+    cursorRow = 24;
+    cursorCol = 0;
 }
-void clear_line(int x){
+void clearLine(int x){
     uint16_t* v_mem = (uint16_t*) 0xB8000;
     for (int y = 0; y < 80; y++){
         v_mem[x * 80 + y] = (0x09 << 8) | ' ';
@@ -268,28 +275,27 @@ void clear_line(int x){
 
 }
 
-void clear_screen(){
+void clearScreen(){
     for (int y = 0; y < 25; y++){
-        clear_line(y);
+        clearLine(y);
     }
-    cursor_row = 0;
-    cursor_col = 0;
+    cursorRow = 0;
+    cursorCol = 0;
 }
 
 void login(char user[], char pass[]) {
 
     if (stringComp(user, username) && stringComp(pass, password)) {
 
-        clear_screen();
+        clearScreen();
         splash();
-        logged_in=1;
+        loggedIn=1;
         print("Logged in as ");
-        printl(user);
-
-        stringCopy(current_user, user);
+        printLine(user);
+            stringCopy(currentUser, user);
     }
     else {
-        printl("Incorrect username or password.");
+        printLine("Incorrect username or password.");
     }
 }
 
@@ -308,13 +314,13 @@ int stringComp(char a[], char b[]){
 
 }
 
-void whoami(){
-    if (logged_in){
+void whoAmI(){
+    if (loggedIn){
     print("You are: ");
-    printl(current_user);
+    printLine(currentUser);
     }
-    if (!logged_in){
-        printl("You are not logged in, please login before running this command");
+    if (!loggedIn){
+        printLine("You are not logged in, please login before running this command");
     }
 }
 void stringCopy(char dest[], char src[]) {
@@ -324,4 +330,14 @@ void stringCopy(char dest[], char src[]) {
         i++;
     }
     dest[i] = '\0';
+}
+void createUser(char user[], char pass[]) {
+    stringCopy(username, user);
+    stringCopy(password, pass);
+    printLine("Account Created:");
+    print("USERNAME: ");
+    printLine(username);
+    print("PASSWORD: ");
+    printLine(password);
+    printLine("Please remember to log into this account by running the LOGIN command");
 }
