@@ -19,15 +19,21 @@ void readLine();
 void help();
 char line[80];
 int stringComp(char a[], char b[]);
-char username[80]="USER";
-char password[80]="PASS";
 int loggedIn = 0;
 char currentUser[80];
 void login(char user[],char pass[]);
 void splitString(char string[], char delim, char result[10][80]);
 void whoAmI();
 void stringCopy(char dest[], char src[]);
-void createUser(char user[], char pass[]);
+void createUser(char usernameInput[], char passwordInput[], char adminInput[]);
+struct userList {
+    char username[80];
+    char password[80];
+    int isAdmin;
+};
+
+struct userList users[10];
+int userCount = 0;
 //====================================
 extern void main() {
     uint16_t* v_mem = (uint16_t*)0xB8000;
@@ -68,11 +74,11 @@ extern void main() {
             continue;
         }
         if (stringComp(parts[0], "USERCREATE")) {
-            createUser(parts[1], parts[2]);
+            createUser(parts[1], parts[2],parts[3]);
             print(">  ");
             continue;
         }
-        if (stringComp(line, "whoAmI")) {
+        if (stringComp(line, "WHOAMI")) {
             whoAmI();
             print(">  ");
             continue;
@@ -97,8 +103,8 @@ void help(){
     printLine("HELP : Displays list of commands");
     printLine("CLEAR : Clears the screens content");
     printLine("LOGIN,[USERNAME],[PASSWORD] : Log into an account");
-    printLine("whoAmI : Lists your accounts details.");
-    printLine("USERCREATE,[USERNAME],[PASSWORD] : Create an account");
+    printLine("WHOAMI : Lists your accounts details.");
+    printLine("USERCREATE,[USERNAME],[PASSWORD],[ISADMIN] : Create an account");
 }
 
 void addChar(char *s, char c) {
@@ -283,20 +289,21 @@ void clearScreen(){
     cursorCol = 0;
 }
 
-void login(char user[], char pass[]) {
+void login(char userInput[], char passInput[]) {
 
-    if (stringComp(user, username) && stringComp(pass, password)) {
+    for (int i = 0; i < userCount; i++) {
 
-        clearScreen();
-        splash();
-        loggedIn=1;
-        print("Logged in as ");
-        printLine(user);
-            stringCopy(currentUser, user);
+        if (stringComp(users[i].username, userInput) && stringComp(users[i].password, passInput)) {
+            loggedIn = 1;
+            stringCopy(currentUser, users[i].username);
+            clearScreen();
+            splash();
+            print("Logged in as ");
+            printLine(currentUser);
+        }
     }
-    else {
-        printLine("Incorrect username or password.");
-    }
+
+    printLine("Incorrect username or password.");
 }
 
 int stringComp(char a[], char b[]){
@@ -331,13 +338,19 @@ void stringCopy(char dest[], char src[]) {
     }
     dest[i] = '\0';
 }
-void createUser(char user[], char pass[]) {
-    stringCopy(username, user);
-    stringCopy(password, pass);
-    printLine("Account Created:");
+void createUser(char usernameInput[], char passwordInput[], char adminInput[]) {
+
+    stringCopy(users[userCount].username, usernameInput);
+    stringCopy(users[userCount].password, passwordInput);
+
+    users[userCount].isAdmin = 1;
+
+    printLine("Account Succesfully Created.");
     print("USERNAME: ");
-    printLine(username);
+    printLine(users[userCount].username);
+
     print("PASSWORD: ");
-    printLine(password);
-    printLine("Please remember to log into this account by running the LOGIN command");
+    printLine(users[userCount].password);
+
+    userCount++;
 }
