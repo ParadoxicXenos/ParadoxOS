@@ -22,7 +22,11 @@ int stringComp(char a[], char b[]);
 char username[] = "USER";
 char password[] = "PASS";
 int logged_in = 0;
-void login();
+char current_user[80];
+void login(char user[],char pass[]);
+void split_string(char string[], char delim, char result[10][80]);
+void whoami();
+void stringCopy(char dest[], char src[]);
 //====================================
 extern void main() {
     uint16_t* v_mem = (uint16_t*)0xB8000;
@@ -44,7 +48,8 @@ extern void main() {
     if (scancode == 0x1c) {
         read_line();
         new_line();
-        
+        char parts[10][80];
+        split_string(line,',',parts);
         if (stringComp(line, "HELP")){
             help();
             print(">  ");
@@ -56,14 +61,22 @@ extern void main() {
             print(">  ");
             continue;
         }
-        if (stringComp(line, "LOGIN")){
-            login();
+        if (stringComp(parts[0], "LOGIN")) {
+            login(parts[1], parts[2]);
             print(">  ");
             continue;
         }
-        else print(line), printl(" is not recognised as an operable command");
+        if (stringComp(line, "WHOAMI")) {
+            whoami();
+            print(">  ");
+            continue;
+        }
+        else{
+        print(line);
+        printl(" is not recognised as an operable command");
         print(">  ");
         continue;
+        }
     }
     char letter = translate(scancode);
 
@@ -78,6 +91,7 @@ void help(){
     printl("HELP : Displays list of commands");
     printl("CLEAR : Clears the screens content");
     printl("LOGIN,[USERNAME],[PASSWORD] : Log into an account");
+    printl("WHOAMI : Lists your accounts details.");
 }
 
 void addChar(char *s, char c) {
@@ -87,6 +101,28 @@ void addChar(char *s, char c) {
     s++;
 
     *s = '\0';
+}
+void split_string(char string[], char delim, char result[10][80]){
+    int pos;
+    int word = 0;
+    int char_pos = 0;
+    for (pos=0; ;pos++){
+        if (word >= 10) break;
+        if (char_pos >= 79) continue;
+        if (string[pos]=='\0'){
+            result[word][char_pos]= '\0';
+            break;
+        }
+        if (string[pos]==delim){
+            result[word][char_pos]= '\0';
+            word++;
+            char_pos = 0;
+        }
+        else{
+            result[word][char_pos] = string[pos];
+            char_pos++;
+        }
+    }
 }
 void read_line(){
     uint16_t* v_mem = (uint16_t*)0xB8000;
@@ -240,10 +276,21 @@ void clear_screen(){
     cursor_col = 0;
 }
 
-void login(){
-    // Login system go here
-    print("Logged in as ");
-    //printl(username);
+void login(char user[], char pass[]) {
+
+    if (stringComp(user, username) && stringComp(pass, password)) {
+
+        clear_screen();
+        splash();
+        logged_in=1;
+        print("Logged in as ");
+        printl(user);
+
+        stringCopy(current_user, user);
+    }
+    else {
+        printl("Incorrect username or password.");
+    }
 }
 
 int stringComp(char a[], char b[]){
@@ -261,3 +308,20 @@ int stringComp(char a[], char b[]){
 
 }
 
+void whoami(){
+    if (logged_in){
+    print("You are: ");
+    printl(current_user);
+    }
+    if (!logged_in){
+        printl("You are not logged in, please login before running this command");
+    }
+}
+void stringCopy(char dest[], char src[]) {
+    int i = 0;
+    while (src[i] != '\0') {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = '\0';
+}
