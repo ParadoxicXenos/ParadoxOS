@@ -26,16 +26,19 @@ void splitString(char string[], char delim, char result[10][80]);
 void whoAmI();
 void stringCopy(char dest[], char src[]);
 void createUser(char usernameInput[], char passwordInput[]);
+static inline uint16_t inw(uint32_t port);
+static inline void outw(uint32_t port, uint16_t val);
 struct userList {
   char username[80];
   char password[80];
   int isAdmin;
 };
+void kernel_main();
 
 struct userList users[10];
 int userCount = 0;
 //====================================
-extern void main() {
+ void kernel_main() {
   uint16_t *v_mem = (uint16_t *)0xB8000;
   splash();
   print(">  ");
