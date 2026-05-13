@@ -5,10 +5,14 @@
 #include "../core/input/input.h"
 #include "../core/commands/commands.h"
 #include "../core/users/users.h"
+#include "../kernel/kernel.h"
+#include "../boot/multiboot.h"
 char line[80];
-void kernel_main();
 
-void kernel_main() {
+void kernel_main(struct multiboot_info* mbi) {
+  if (!(mbi->flags & (1 << 12))) {
+    print("Oh shiddings no framebuffer");
+}
   uint16_t *v_mem = (uint16_t *)0xB8000;
 
   splash();
@@ -26,6 +30,7 @@ void kernel_main() {
       } else {
         cursorCol--;
         v_mem[cursorRow * 80 + cursorCol] = (0x09 << 8) | ' ';
+        removeLastChar(inputString);
       }
       continue;
     }

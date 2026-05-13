@@ -11,7 +11,7 @@ static inline uint8_t inb(uint16_t port) {
 }
 
 uint8_t readPs2Port() {
-  while (!(inb(0x64) & 1))
+  while ((inb(0x64) & 1))
     ;
 
   return inb(0x60);
@@ -208,6 +208,7 @@ char translate(char scancode) {
     return '0';
   }
 
+  
   addChar(inputString, '?');
   return '?';
 }

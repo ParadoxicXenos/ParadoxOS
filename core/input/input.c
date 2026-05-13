@@ -13,12 +13,19 @@ void addChar(char *s, char c) {
 }
 
 void readLine() {
-  uint16_t *v_mem = (uint16_t *)0xB8000;
-  line[0] = '\0';
+  line[0] = '\n';
+  stringCopy(line, inputString);
+  inputString[0] = '\0';
+}
 
-  for (int y = 3; y < cursorCol; y++) {
-    char letter = v_mem[cursorRow * 80 + y] & 0xFF;
+void removeLastChar(char str[80]) {
+    int i = 0;
 
-    addChar(line, letter);
-  }
+    while (str[i] != '\0') {
+        i++;
+    }
+
+    if (i > 0) {
+        str[i - 1] = '\0';
+    }
 }
