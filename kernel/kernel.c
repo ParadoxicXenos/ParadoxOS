@@ -8,13 +8,27 @@
 #include "../kernel/kernel.h"
 #include "../boot/multiboot.h"
 char line[80];
+uint32_t* framebuffer;
+uint32_t fbWidth;
+uint32_t fbHeight;
+uint32_t fbPitch;
+uint8_t fbBpp;
 
-void kernel_main(struct multiboot_info* mbi) {
+multiboot_info_t* mbi;
+
+void kernel_main(uint32_t magic, uint32_t addr) {
+  mbi = (multiboot_info_t*) addr;
+
+  framebuffer = (uint32_t*) mbi->framebuffer_addr;
+  fbWidth  = (uint32_t) mbi->framebuffer_width;
+  fbHeight = (uint32_t) mbi->framebuffer_height;
+  fbPitch  = (uint32_t) mbi->framebuffer_pitch;
+  fbBpp    = (uint8_t) mbi->framebuffer_bpp;
+  framebuffer[0] = 0x00FF0000;
   if (!(mbi->flags & (1 << 12))) {
     print("Oh shiddings no framebuffer");
-}
-  uint16_t *v_mem = (uint16_t *)0xB8000;
-
+  }
+  putpixel(10,20,0x00FFFFFF);
   splash();
   print(">  ");
 
@@ -29,7 +43,7 @@ void kernel_main(struct multiboot_info* mbi) {
         continue;
       } else {
         cursorCol--;
-        v_mem[cursorRow * 80 + cursorCol] = (0x09 << 8) | ' ';
+      //  v_mem[cursorRow * 80 + cursorCol] = (0x09 << 8) | ' ';
         removeLastChar(inputString);
       }
       continue;

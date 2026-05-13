@@ -1,5 +1,5 @@
-#include <stdint.h>
 #include "string.h"
+#include <stdint.h>
 
 //====================================
 // STRING COMPARE
@@ -63,17 +63,17 @@ void splitString(char string[], char delim, char result[10][80]) {
 }
 // CLEAN STRING===============================
 void cleanString(char string[80], char remove, char result[80]) {
-    int pos;
-    int char_pos = 0;
+  int pos;
+  int char_pos = 0;
 
-    for (pos = 0; pos < 79 && string[pos] != '\0'; pos++) {
+  for (pos = 0; pos < 79 && string[pos] != '\0'; pos++) {
 
-        if (string[pos] != remove) {
-            if (char_pos < 79) {
-                result[char_pos++] = string[pos];
-            }
-        }
+    if (string[pos] != remove) {
+      if (char_pos < 79) {
+        result[char_pos++] = string[pos];
+      }
     }
+  }
 
-    result[char_pos] = '\0';
+  result[char_pos] = '\0';
 }

@@ -48,7 +48,8 @@ void whoAmI() {
     print("You are: ");
     printLine(currentUser);
   } else {
-    printLine("You are not logged in, please login before running this command");
+    printLine(
+        "You are not logged in, please login before running this command");
   }
 }
 

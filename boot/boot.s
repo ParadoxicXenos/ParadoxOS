@@ -1,11 +1,10 @@
-.set ALIGN,    1<<0
-.set MEMINFO,  1<<1
-.set VIDEO,    1<<2
-
-.set FLAGS,    ALIGN | MEMINFO | VIDEO
-.set MAGIC,    0x1BADB002
-.set CHECKSUM, -(MAGIC + FLAGS)
-
+/* Declare constants for the multiboot header. */
+.set ALIGN,    1<<0             /* align loaded modules on page boundaries */
+.set MEMINFO,  1<<1             /* provide memory map */
+.set VIDEO,    1<<2				/* gib video info */
+.set FLAGS,    ALIGN | MEMINFO | VIDEO  /* this is the Multiboot 'flag' field */
+.set MAGIC,    0x1BADB002       /* 'magic number' lets bootloader find the header */
+.set CHECKSUM, -(MAGIC + FLAGS) /* checksum of above, to prove we are multiboot */
 
 .section .multiboot
 .align 4
@@ -13,6 +12,16 @@
 .long FLAGS
 .long CHECKSUM
 
+.long 0            # header_addr
+.long 0            # load_addr
+.long 0            # load_end_addr
+.long 0            # bss_end_addr
+.long 0            # entry_addr
+
+.long 0            # mode_type
+.long 640          # width
+.long 480          # height
+.long 32           # depth
 
 .section .bss
 .align 16
@@ -24,17 +33,15 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
-    mov $stack_top, %esp
+	mov $stack_top, %esp
 
-    push %ebx
-    call kernel_main
+	push %ebx
+    push %eax
 
-	
+	call kernel_main
+
 	cli
 1:	hlt
 	jmp 1b
-
-
-
 
 .size _start, . - _start
