@@ -4,7 +4,6 @@
 #include "../drivers/keyboard/keyboard.h"
 #include "../core/input/input.h"
 #include "../core/commands/commands.h"
-#include "../core/users/users.h"
 #include "../kernel/kernel.h"
 #include "../boot/multiboot.h"
 char line[80];
@@ -13,8 +12,9 @@ uint32_t fbWidth;
 uint32_t fbHeight;
 uint32_t fbPitch;
 uint8_t fbBpp;
-
+extern void drawchar(unsigned char c, int x, int y,uint8_t r, uint8_t g, uint8_t b);
 multiboot_info_t* mbi;
+
 
 void kernel_main(uint32_t magic, uint32_t addr) {
   mbi = (multiboot_info_t*) addr;
@@ -28,7 +28,10 @@ void kernel_main(uint32_t magic, uint32_t addr) {
   if (!(mbi->flags & (1 << 12))) {
     print("Oh shiddings no framebuffer");
   }
-  putpixel(10,20,0x00FFFFFF);
+  clearScreen();
+  drawchar('H', 0, 0, 255, 255, 255);
+  drawchar('i', 8, 0, 255, 255, 255);
+  framebuffer[0] = 0x00FF0000;
   splash();
   print(">  ");
 

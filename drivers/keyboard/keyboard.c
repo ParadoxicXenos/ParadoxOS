@@ -2,7 +2,6 @@
 
 #include "../../core/input/input.h"
 #include "../../drivers/keyboard/keyboard.h"
-#include "../video/vga.h"
 
 static inline uint8_t inb(uint16_t port) {
   uint8_t ret;

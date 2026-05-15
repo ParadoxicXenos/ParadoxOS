@@ -47,14 +47,14 @@ void clearLine(int x) {
   }
 }
 
-void clearScreen() {
-  for (int y = 0; y < 25; y++) {
-    clearLine(y);
-  }
+//void clearScreen() {
+  //for (int y = 0; y < 25; y++) {
+    //clearLine(y);
+  //}
 
-  cursorRow = 0;
-  cursorCol = 0;
-}
+  //cursorRow = 0;
+  //cursorCol = 0;
+//}
 
 void scroll() {
   uint16_t *v_mem = (uint16_t *)0xB8000;
