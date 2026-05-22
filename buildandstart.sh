@@ -72,4 +72,8 @@ echo "Done."
 # -------------------------
 # Run
 # -------------------------
-qemu-system-i386 -cdrom $BUILD/ParadoxOS.iso
+qemu-system-i386 \
+  -cdrom $BUILD/ParadoxOS.iso \
+  -m 512 \
+  -serial stdio \
+  -vga std

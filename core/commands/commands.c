@@ -9,11 +9,24 @@ extern void drawchar(unsigned char c, int x, int y, uint8_t r, uint8_t g,
                      uint8_t b);
 extern void putString(char str[80], int row);
 extern void putStringl(char str[80], int row);
+extern void putArgbStringl(char *str,int r,int g, int b);
 extern void newLine();
 extern void prompt(int row);
 extern int cursorRow;
 extern int cursorCol;
 extern void clearScreen(void);
+struct colors {
+  int r;
+  int g;
+  int b;
+  char name[80];
+};
+
+extern struct colors colorList[9];
+extern int red;
+extern int blue;
+extern int green;
+
 //====================================
 // HELP
 //====================================
@@ -24,6 +37,8 @@ void help() {
   putStringl("LOGIN,[USERNAME],[PASSWORD] : Log into an account", cursorRow);
   putStringl("WHOAMI : Lists your accounts details.", cursorRow);
   putStringl("USERCREATE,[USERNAME],[PASSWORD] : Create an account", cursorRow);
+  putStringl("COLOR,[COLOR] : CHANGES PRINTING COLOR", cursorRow);
+  putStringl("COLOR,LIST : LISTS ALL AVAILABLE COLORS", cursorRow);
 }
 
 //====================================
@@ -50,6 +65,28 @@ void login(char userInput[], char passInput[]) {
   }
 
   putStringl("Incorrect username or password.", cursorRow);
+}
+
+void changeColor(char color[]) {
+    for(int i = 0; i < 9; i++) {
+
+        if(stringComp(color, colorList[i].name)) {
+
+            red = colorList[i].r;
+            green = colorList[i].g;
+            blue = colorList[i].b;
+
+            putStringl("Color changed",cursorRow);            
+            return;
+        }
+    }
+
+    putStringl("Color not found",cursorRow);
+}
+void listColor() {
+  for(int i = 0; i < 9; i++) {
+        putArgbStringl(colorList[i].name,colorList[i].r,colorList[i].g,colorList[i].b ); 
+    }
 }
 
 void whoAmI() {

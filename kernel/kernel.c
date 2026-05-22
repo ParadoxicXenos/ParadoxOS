@@ -1,12 +1,11 @@
 #include <stdint.h>
 
-// #include "../drivers/video/vga.h"
 #include "../boot/multiboot.h"
 #include "../core/commands/commands.h"
 #include "../core/input/input.h"
 #include "../drivers/keyboard/keyboard.h"
 #include "../kernel/kernel.h"
-char line[80];
+char line[];
 uint32_t *framebuffer;
 uint32_t fbWidth;
 uint32_t fbHeight;
@@ -15,7 +14,9 @@ uint8_t fbBpp;
 multiboot_info_t *mbi;
 int cursorRow;
 int cursorCol;
-
+extern void changeColor(char color[]);
+extern void listColor();
+extern void putArgbInt(int num,int r,int g,int b);
 void kernel_main(uint32_t magic, uint32_t addr) {
   mbi = (multiboot_info_t *)addr;
 
@@ -24,13 +25,35 @@ void kernel_main(uint32_t magic, uint32_t addr) {
   fbHeight = (uint32_t)mbi->framebuffer_height;
   fbPitch = (uint32_t)mbi->framebuffer_pitch;
   fbBpp = (uint8_t)mbi->framebuffer_bpp;
-  splash();
+  struct colors {
+  int r;
+  int g;
+  int b;
+  char name[80];
+};
 
+  struct colors colorList[9] = {
+    {47, 54, 153, "PURPLE"},
+    {32, 107, 29, "GREEN"},
+    {26, 128, 184, "BLUE"},
+    {235, 146, 52, "ORANGE"},
+    {235, 207, 52, "YELLOW"},
+    {232, 30, 30, "RED"},
+    {111, 227, 175, "MINT"},
+    {255, 255, 255, "WHITE"},
+    {255, 128, 234, "PINK"}
+  };
+  splash();
+  putString("Width: ");
+  putArgbInt(fbWidth,255,0,0);
+
+  putString(" Height: ");
+  putArgbInt(fbHeight,255,0,0);
+
+  putString(" BPP: ");
+  putArgbInt(fbBpp,255,0,0);
   prompt(cursorRow);
   while (1) {
-    if (cursorCol >= 79) {
-      newLine();
-    }
     uint8_t scancode = readPs2Port();
 
     if (scancode & 0x80) // key release
@@ -47,7 +70,7 @@ void kernel_main(uint32_t magic, uint32_t addr) {
       }
       continue;
     }
-
+    
     if (scancode == 0x1c) { // enter key
       readLine();
       newLine();
@@ -60,6 +83,7 @@ void kernel_main(uint32_t magic, uint32_t addr) {
         prompt(cursorRow);
         continue;
       }
+      
 
       if (stringComp(line, "CLEAR")) {
         clearScreen();
@@ -80,12 +104,24 @@ void kernel_main(uint32_t magic, uint32_t addr) {
         continue;
       }
 
+      if (stringComp(parts[0], "COLOR")) {
+        if(stringComp(parts[1],"LIST")){
+          listColor();
+          prompt(cursorRow);
+          continue;
+        }
+        else{
+        changeColor(parts[1]);
+        prompt(cursorRow);
+        continue;
+      }
+    }
       if (stringComp(line, "WHOAMI")) {
         whoAmI();
         prompt(cursorRow);
         continue;
       } else {
-        putString(line, cursorRow);
+        putString(line);
         putStringl(" is not recognised as an operable command", cursorRow);
         prompt(cursorRow);
         continue;
@@ -95,6 +131,6 @@ void kernel_main(uint32_t magic, uint32_t addr) {
     char letter = translate(scancode);
     char out[2] = {letter, '\0'};
 
-    putString(out, cursorRow);
+    putString(out);
   }
 }

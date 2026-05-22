@@ -19,8 +19,8 @@
 .long 0            # entry_addr
 
 .long 0            # mode_type
-.long 640          # width
-.long 480          # height
+.long 1280          # width
+.long 1024          # height
 .long 32           # depth
 
 .section .bss
