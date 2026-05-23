@@ -4,46 +4,34 @@
 #include "../input/input.h"
 #include "../users/users.h"
 #include "commands.h"
-extern void clearChar(int row, int col);
-extern void drawchar(unsigned char c, int x, int y, uint8_t r, uint8_t g,
-                     uint8_t b);
-extern void putString(char str[80], int row);
-extern void putStringl(char str[80], int row);
-extern void putArgbStringl(char *str,int r,int g, int b);
-extern void newLine();
-extern void prompt(int row);
-extern int cursorRow;
-extern int cursorCol;
-extern void clearScreen(void);
-struct colors {
-  int r;
-  int g;
-  int b;
-  char name[80];
-};
-
-extern struct colors colorList[9];
-extern int red;
-extern int blue;
-extern int green;
 
 //====================================
 // HELP
 //====================================
 void help() {
-  putStringl("Commands:", cursorRow);
-  putStringl("HELP : Displays list of commands", cursorRow);
-  putStringl("CLEAR : Clears the screens content", cursorRow);
-  putStringl("LOGIN,[USERNAME],[PASSWORD] : Log into an account", cursorRow);
-  putStringl("WHOAMI : Lists your accounts details.", cursorRow);
-  putStringl("USERCREATE,[USERNAME],[PASSWORD] : Create an account", cursorRow);
-  putStringl("COLOR,[COLOR] : CHANGES PRINTING COLOR", cursorRow);
-  putStringl("COLOR,LIST : LISTS ALL AVAILABLE COLORS", cursorRow);
+  putStringl("Commands:");
+  putStringl("HELP : Displays list of commands");
+  putStringl("CLEAR : Clears the screens content");
+  putStringl("LOGIN,[USERNAME],[PASSWORD] : Log into an account");
+  putStringl("WHOAMI : Lists your accounts details.");
+  putStringl("USERCREATE,[USERNAME],[PASSWORD] : Create an account");
+  putStringl("COLOR,[COLOR] : CHANGES PRINTING COLOR");
+  putStringl("COLOR,LIST : LISTS ALL AVAILABLE COLORS");
 }
 
 //====================================
 // AUTH / USER COMMANDS
 //====================================
+void gfxinfo(){
+  putArgbString("Width: ",255,0,0);
+  putArgbInt(fbWidth,255,0,0);
+  cursorCol = 0;
+  putArgbString("Height: ",255,0,0);
+  putArgbInt(fbHeight,255,0,0);
+  cursorCol = 0;
+  putArgbString("BPP: ",255,0,0);
+  putArgbInt(fbBpp,255,0,0);
+}
 void login(char userInput[], char passInput[]) {
 
   for (int i = 0; i < userCount; i++) {
@@ -57,14 +45,14 @@ void login(char userInput[], char passInput[]) {
       clearScreen();
       // splash();
 
-      putString("Logged in as ", cursorRow);
-      putStringl(currentUser, cursorRow);
+      putString("Logged in as ");
+      putStringl(currentUser);
 
       return;
     }
   }
 
-  putStringl("Incorrect username or password.", cursorRow);
+  putStringl("Incorrect username or password.");
 }
 
 void changeColor(char color[]) {
@@ -76,27 +64,26 @@ void changeColor(char color[]) {
             green = colorList[i].g;
             blue = colorList[i].b;
 
-            putStringl("Color changed",cursorRow);            
+            putStringl("Color changed");            
             return;
         }
     }
 
-    putStringl("Color not found",cursorRow);
+    putStringl("Color not found");
 }
 void listColor() {
-  for(int i = 0; i < 9; i++) {
+  for(int i = 0; i < 10; i++) {
         putArgbStringl(colorList[i].name,colorList[i].r,colorList[i].g,colorList[i].b ); 
     }
 }
 
 void whoAmI() {
   if (loggedIn) {
-    putString("You are: ", cursorRow);
-    putStringl(currentUser, cursorRow);
+    putString("You are: ");
+    putStringl(currentUser);
   } else {
     putStringl(
-        "You are not logged in, please login before running this command",
-        cursorRow);
+        "You are not logged in, please login before running this command");
   }
 }
 
@@ -107,12 +94,12 @@ void createUser(char usernameInput[], char passwordInput[]) {
 
   users[userCount].isAdmin = 1;
 
-  putStringl("Account Succesfully Created.", cursorRow);
-  putString("USERNAME: ", cursorRow);
-  putStringl(users[userCount].username, cursorRow);
+  putStringl("Account Succesfully Created.");
+  putString("USERNAME: ");
+  putStringl(users[userCount].username);
 
-  putString("PASSWORD: ", cursorRow);
-  putStringl(users[userCount].password, cursorRow);
+  putString("PASSWORD: ");
+  putStringl(users[userCount].password);
 
   userCount++;
 }

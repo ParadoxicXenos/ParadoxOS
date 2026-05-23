@@ -20,7 +20,7 @@
 
 .long 0            # mode_type
 .long 1280          # width
-.long 1024          # height
+.long 720          # height
 .long 32           # depth
 
 .section .bss

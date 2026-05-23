@@ -6,17 +6,17 @@
 #include "../drivers/keyboard/keyboard.h"
 #include "../kernel/kernel.h"
 char line[];
+multiboot_info_t *mbi;
+
 uint32_t *framebuffer;
 uint32_t fbWidth;
 uint32_t fbHeight;
 uint32_t fbPitch;
 uint8_t fbBpp;
-multiboot_info_t *mbi;
+
 int cursorRow;
 int cursorCol;
-extern void changeColor(char color[]);
-extern void listColor();
-extern void putArgbInt(int num,int r,int g,int b);
+
 void kernel_main(uint32_t magic, uint32_t addr) {
   mbi = (multiboot_info_t *)addr;
 
@@ -26,32 +26,20 @@ void kernel_main(uint32_t magic, uint32_t addr) {
   fbPitch = (uint32_t)mbi->framebuffer_pitch;
   fbBpp = (uint8_t)mbi->framebuffer_bpp;
   struct colors {
-  int r;
-  int g;
-  int b;
-  char name[80];
-};
-
-  struct colors colorList[9] = {
-    {47, 54, 153, "PURPLE"},
-    {32, 107, 29, "GREEN"},
-    {26, 128, 184, "BLUE"},
-    {235, 146, 52, "ORANGE"},
-    {235, 207, 52, "YELLOW"},
-    {232, 30, 30, "RED"},
-    {111, 227, 175, "MINT"},
-    {255, 255, 255, "WHITE"},
-    {255, 128, 234, "PINK"}
+    int r;
+    int g;
+    int b;
+    char name[80];
   };
+
+  struct colors colorList[10] = {
+      {115, 99, 255, "PURPLE"}, {0, 255, 0, "GREEN"},
+      {0, 128, 255, "BLUE"},    {235, 146, 52, "ORANGE"},
+      {255, 221, 0, "YELLOW"},  {255, 0, 0, "RED"},
+      {111, 227, 175, "MINT"},  {255, 255, 255, "WHITE"},
+      {255, 128, 234, "PINK"},  {221, 0, 255, "MAGENTA"}};
   splash();
-  putString("Width: ");
-  putArgbInt(fbWidth,255,0,0);
 
-  putString(" Height: ");
-  putArgbInt(fbHeight,255,0,0);
-
-  putString(" BPP: ");
-  putArgbInt(fbBpp,255,0,0);
   prompt(cursorRow);
   while (1) {
     uint8_t scancode = readPs2Port();
@@ -70,7 +58,7 @@ void kernel_main(uint32_t magic, uint32_t addr) {
       }
       continue;
     }
-    
+
     if (scancode == 0x1c) { // enter key
       readLine();
       newLine();
@@ -83,7 +71,6 @@ void kernel_main(uint32_t magic, uint32_t addr) {
         prompt(cursorRow);
         continue;
       }
-      
 
       if (stringComp(line, "CLEAR")) {
         clearScreen();
@@ -105,24 +92,41 @@ void kernel_main(uint32_t magic, uint32_t addr) {
       }
 
       if (stringComp(parts[0], "COLOR")) {
-        if(stringComp(parts[1],"LIST")){
+        if (stringComp(parts[1], "LIST")) {
           listColor();
           prompt(cursorRow);
           continue;
+        } else {
+          changeColor(parts[1]);
+          prompt(cursorRow);
+          continue;
         }
-        else{
-        changeColor(parts[1]);
-        prompt(cursorRow);
-        continue;
       }
-    }
       if (stringComp(line, "WHOAMI")) {
         whoAmI();
         prompt(cursorRow);
         continue;
+      }
+      if (stringComp(line, "RICK")) {
+        playBigRick();
+        clearScreen();
+        prompt(cursorRow);
+        continue;
+      }
+      if (stringComp(line, "BADAPPLE")) {
+        playApple();
+        clearScreen();
+        prompt(cursorRow);
+        continue;
+      }
+
+      if (stringComp(line, "GFXINFO")) {
+        gfxinfo();
+        prompt(cursorRow);
+        continue;
       } else {
         putString(line);
-        putStringl(" is not recognised as an operable command", cursorRow);
+        putStringl(" is not recognised as an operable command");
         prompt(cursorRow);
         continue;
       }

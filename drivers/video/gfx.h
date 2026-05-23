@@ -7,4 +7,14 @@ extern uint8_t fbBpp;
 extern uint8_t threeDfx[4096];
 extern int cursorCol;
 extern int cursorRow;
-
+extern uint32_t *framebuffer;
+extern uint32_t fbPitch;
+extern uint8_t threeDfx[4096];
+extern const uint8_t rick_video_blob[];
+extern const uint32_t rick_frame_offsets[];
+extern const uint8_t apple_video_blob[];
+extern const uint32_t apple_frame_offsets[];
+extern const uint32_t apple_frame_count;
+extern int red;
+extern int green;
+extern int blue;
