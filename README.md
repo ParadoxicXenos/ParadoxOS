@@ -1,8 +1,11 @@
 ParadoxOS:
 ================================================
 HOW TO RUN IN QEMU:
-Place the ISO in a folder, open a terminal in that folder then run this coomand:
+Place the ISO in a folder, open a terminal in that folder then run this command:
+
 qemu-system-i386 \-cdrom ParadoxOS.iso \-m 512 \-serial stdio \-vga std
+
+
 PICTURES:
 <img width="587" height="209" alt="image" src="https://github.com/user-attachments/assets/33f24e0a-aecc-451e-9ca0-37dbca00258d" />
 <img width="116" height="97" alt="image" src="https://github.com/user-attachments/assets/8a83de6f-f4c2-4164-88c6-94681c2b3655" />
