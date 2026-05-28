@@ -20,7 +20,7 @@ extern int cursorRow;
 extern int cursorCol;
 extern void putArgbInt(int num,int r,int g,int b);
 extern void clearScreen(void);
-
+extern void argbputpixel(int x, int y, int r, int g, int b);
 struct colors {
   int r;
   int g;

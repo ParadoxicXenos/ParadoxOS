@@ -8,11 +8,13 @@
 #define CHAR_HEIGHT 16
 #define COLS (SCREEN_WIDTH / CHAR_WIDTH)   // 80
 #define ROWS (SCREEN_HEIGHT / CHAR_HEIGHT) // 30
-const uint32_t rick_frame_count = 96;
-const uint32_t rick_frame_width = 80;
-const uint32_t rick_frame_height = 60;
+const uint32_t rick_frame_count = 165;
+const uint32_t rick_frame_width = 640;
+const uint32_t rick_frame_height = 360;
 const uint32_t apple_frame_width = 80;
 const uint32_t apple_frame_height = 60;
+void wait_ms(uint32_t ms);
+void splash();
 
 struct colors {
   int r;
@@ -104,7 +106,7 @@ void clearScreen() {
 
   cursorRow = 0;
   cursorCol = 0;
-
+  splash();
   prompt(cursorRow);
 }
 
@@ -180,27 +182,33 @@ void splash() {
   fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 1, 1, 30, 24);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 11, 4, 10, 18);
   fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 1, 25, 10, 11);
+  wait_ms(4000);
   // A
   fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 33, 8, 21, 28);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 41, 11, 5, 11);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 41, 25, 5, 11);
+  wait_ms(4000);
   // R
   fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 56, 8, 21, 28);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 64, 11, 5, 11);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 64, 25, 5, 11);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 74, 27, 3, 4);
+  wait_ms(4000);
   // A
   fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 79, 8, 21, 28);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 87, 11, 5, 11);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 87, 25, 5, 11);
+  wait_ms(4000);
   // D
   fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 102, 8, 21, 28);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 119, 8, 4, 4);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 119, 32, 4, 4);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 108, 11, 7, 22);
+  wait_ms(4000);
   // O
   fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 125, 8, 21, 28);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 133, 11, 5, 22);
+  wait_ms(4000);
   // X
   fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 148, 8, 21, 28);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 156, 8, 5, 12);
@@ -211,6 +219,7 @@ void splash() {
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 149, 22, 1, 4);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 168, 20, 1, 8);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 167, 22, 1, 4);
+  wait_ms(4000);
   // O
   fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 171, 1, 30, 35);
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 181, 4, 10, 29);
@@ -220,6 +229,9 @@ void splash() {
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 203, 25, 20, 8);
   cursorCol = 0;
   cursorRow = 3;
+putArgbStringl("ParadoxOS 1.0.34", foreRed, foreGreen, foreBlue);
+putArgbStringl("Developed by Mehroz Najif", foreRed, foreGreen, foreBlue);
+putArgbStringl("AKA ParadoxicXenos", foreRed, foreGreen, foreBlue);
 }
 void wait_ms(uint32_t ms) {
   while (ms--) {
@@ -231,22 +243,21 @@ void wait_ms(uint32_t ms) {
 
 void playBigRick() {
   for (int f = 0; f < rick_frame_count; f++) {
-    wait_ms(5000);
-    clearScreen();
+    wait_ms(2000);
     uint8_t *frame = (uint8_t *)&rick_video_blob[rick_frame_offsets[f]];
-    for (int y = 0; y < 60; y++) {
-      for (int x = 0; x < 80; x++) {
-        int pixel_index = y * 80 + x;
+    for (int y = 0; y < rick_frame_height; y++) {
+      for (int x = 0; x < rick_frame_width; x++) {
+        int pixel_index = y * rick_frame_width + x;
         int byte_index = pixel_index / 8;
         int bit_index = 7 - (x % 8);
         int pixel = (frame[byte_index] >> bit_index) & 1;
-        int biggerx = (12 * x) + 160;
-        int biggery = 12 * y;
+        int biggerx = 2 * x;
+        int biggery = 2 * y;
         if (pixel) {
-          fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, biggerx, biggery,
-                   12, 12);
-        } else {
-          fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, biggerx, biggery, 12, 12);
+          fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, biggerx, biggery, 2, 2);
+          } else {
+          fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, biggerx, biggery, 2, 2);
+        
         }
       }
     }
@@ -255,8 +266,7 @@ void playBigRick() {
 void playApple() {
   for (int f = 0; f < apple_frame_count; f++) {
     wait_ms(4000);
-    clearScreen();
-    uint8_t *frame = (uint8_t *)&apple_video_blob[apple_frame_offsets[f]];
+   uint8_t *frame = (uint8_t *)&apple_video_blob[apple_frame_offsets[f]];
     for (int y = 0; y < 60; y++) {
       for (int x = 0; x < 80; x++) {
         int pixel_index = y * 80 + x;
@@ -266,10 +276,10 @@ void playApple() {
         int biggerx = (12 * x) + 160;
         int biggery = 12 * y;
         if (pixel) {
-          fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, biggerx, biggery,
-                   12, 12);
-        } else {
           fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, biggerx, biggery, 12, 12);
+          } else {
+          fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, biggerx, biggery, 12, 12);
+        
         }
       }
     }

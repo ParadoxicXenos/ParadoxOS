@@ -69,7 +69,6 @@ void kernel_main(uint32_t magic, uint32_t addr) {
 
       if (stringComp(line, "CLEAR")) {
         clearScreen();
-        splash();
         prompt(cursorRow);
         partsClean();
         continue;
@@ -89,7 +88,7 @@ void kernel_main(uint32_t magic, uint32_t addr) {
         continue;
       }
 
-      if (stringComp(parts[0], "COLOR")) {
+      if (stringComp(parts[0], "COLOR")||stringComp(parts[0], "COLOUR")) {
         if (stringComp(parts[1], "LIST")) {
           listColor();
           prompt(cursorRow);

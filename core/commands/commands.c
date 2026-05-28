@@ -5,9 +5,6 @@
 #include "../users/users.h"
 #include "commands.h"
 
-//====================================
-// HELP
-//====================================
 void help() {
   putStringl("Commands:");
   putStringl("HELP : Displays list of commands");
@@ -17,15 +14,14 @@ void help() {
   putStringl("USERCREATE,[USERNAME],[PASSWORD] : Create an account");
   putStringl("COLOR,[FOREGROUND],[BACKGROUND] : Changes printing colors");
   putStringl("COLOR,LIST : Lists all available colors");
+  putStringl("COLOUR,[FOREGROUND],[BACKGROUND] : Changes printing colours");
+  putStringl("COLOUR,LIST : Lists all available colours");
   putStringl("BADAPPLE : Plays badapple");
   putStringl("RICK : Plays a 12 second clip of rick astley");
   putStringl("GFXINFO : List graphical propeties");
 
 }
 
-//====================================LISTS ALL AVAILABLE COLORS
-// AUTH / USER COMMANDS
-//====================================
 void gfxinfo(){
   putArgbString("Width: ",255,0,0);
   putArgbInt(fbWidth,255,0,0);
@@ -47,7 +43,6 @@ void login(char userInput[], char passInput[]) {
       stringCopy(currentUser, users[i].username);
 
       clearScreen();
-      // splash();
 
       putString("Logged in as ");
       putStringl(currentUser);
@@ -63,21 +58,33 @@ void changeColor(char foreground[],char background[]) {
     for(int i = 0; i < 23; i++) {
 
         if(stringComp(foreground, colorList[i].name)) {
-
+            uint32_t color = (foreRed << 16) | (foreGreen << 8) | foreBlue;
             foreRed = colorList[i].r;
             foreGreen = colorList[i].g;
             foreBlue = colorList[i].b;
+            for (int x = 0;x<1280;x++){
+              for (int y = 0; y<720;y++){
+                if (framebuffer[y * (fbPitch / 4) + x] == color){
+                  argbputpixel(x, y, foreRed, foreGreen, foreBlue);
+                }
+              }
+            }
 
             putStringl("Foreground Color changed");            
         }
         if(stringComp(background, colorList[i].name)) {
-
+            uint32_t color = (backRed << 16) | (backGreen << 8) | backBlue;
             backRed = colorList[i].r;
             backGreen = colorList[i].g;
             backBlue = colorList[i].b;
-
+            for (int x = 0;x<1280;x++){
+              for (int y = 0; y<720;y++){
+                if (framebuffer[y * (fbPitch / 4) + x] == color){
+                  argbputpixel(x, y, backRed, backGreen, backBlue);
+                }
+              }
+            }
             putStringl("Background Color changed");           
-            clearScreen(); 
         }
     }
 
@@ -87,6 +94,7 @@ void listColor() {
         putArgbStringl(colorList[i].name,colorList[i].r,colorList[i].g,colorList[i].b ); 
     }
     putStringl("RUN : COLOR,[FOREGROUND],[BACKGROUND] TO CHANGE COLOR");
+    putStringl("RUN : COLOUR,[FOREGROUND],[BACKGROUND] TO CHANGE COLOUR");
 }
 
 void whoAmI() {
