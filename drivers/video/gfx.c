@@ -229,7 +229,7 @@ void splash() {
   fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 203, 25, 20, 8);
   cursorCol = 0;
   cursorRow = 3;
-putArgbStringl("ParadoxOS 1.0.34", foreRed, foreGreen, foreBlue);
+putArgbStringl("ParadoxOS 1.1.0", foreRed, foreGreen, foreBlue);
 putArgbStringl("Developed by Mehroz Najif", foreRed, foreGreen, foreBlue);
 putArgbStringl("AKA ParadoxicXenos", foreRed, foreGreen, foreBlue);
 }

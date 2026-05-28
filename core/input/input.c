@@ -1,6 +1,6 @@
 #include "input.h"
 
-char inputString[80];
+char inputString[999];
 
 void addChar(char *s, char c) {
   while (*s)

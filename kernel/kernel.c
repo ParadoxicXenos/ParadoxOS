@@ -5,7 +5,7 @@
 #include "../core/input/input.h"
 #include "../drivers/keyboard/keyboard.h"
 #include "../kernel/kernel.h"
-char line[];
+char line[999];
 multiboot_info_t *mbi;
 char parts[10][80];
 uint32_t *framebuffer;
@@ -38,7 +38,12 @@ void kernel_main(uint32_t magic, uint32_t addr) {
   prompt(cursorRow);
   while (1) {
     uint8_t scancode = readPs2Port();
-
+    if (cursorCol > (1280/8)){
+      newLine();
+      putArgbStringl("STRING IS TOO LONG", 255, 0, 0);
+      prompt(cursorRow);
+      stringCopy(inputString, "");
+    }
     if (scancode & 0x80) // key release
       continue;
 

@@ -26,7 +26,7 @@ int stringComp(char a[], char b[]) {
 //====================================
 // STRING COPY
 //====================================
-void stringCopy(char dest[], char src[]) {
+void stringCopy(char dest[], char src[999]) {
   int i = 0;
 
   while (src[i] != '\0') {
@@ -40,7 +40,7 @@ void stringCopy(char dest[], char src[]) {
 //====================================
 // SPLIT STRING
 //====================================
-void splitString(char string[], char delim, char result[10][80]) {
+void splitString(char string[999], char delim, char result[10][80]) {
   int pos;
   int word = 0;
   int char_pos = 0;
