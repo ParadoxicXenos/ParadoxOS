@@ -16,9 +16,10 @@ char translate(uint8_t scancode);
 extern void splash();
 struct colors;
 
-extern void changeColor(char color[]);
+extern void changeColor(char foreground[],char background[]);
 extern void listColor();
 extern void putArgbInt(int num, int r, int g, int b);
 extern void playBigRick();
 extern void playApple();
 extern void gfxinfo();
+extern void partsClean();

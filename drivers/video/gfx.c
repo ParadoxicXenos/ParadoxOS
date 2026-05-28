@@ -21,19 +21,31 @@ struct colors {
   char name[80];
 };
 
-struct colors colorList[10];
-
-struct colors colorList[10] = {
-    {115, 99, 255, "PURPLE"},
-    {0, 255, 0, "GREEN"},     
-    {0, 128, 255, "BLUE"},
-    {235, 146, 52, "ORANGE"}, 
-    {255, 221, 0, "YELLOW"},  
-    {255, 0, 0, "RED"},
-    {111, 227, 175, "MINT"},  
-    {255, 255, 255, "WHITE"}, 
-    {255, 128, 234, "PINK"},
-    {221, 0, 255, "MAGENTA"}};
+struct colors colorList[] = {
+{0, 255, 255, "CYAN"},        
+{128, 128, 128, "GRAY"},      
+{64, 64, 64, "DARKGRAY"},     
+{139, 69, 19, "BROWN"},       
+{0, 100, 0, "DARKGREEN"},     
+{0, 0, 128, "NAVY"},          
+{255, 215, 0, "GOLD"},        
+{192, 192, 192, "SILVER"},    
+{255, 80, 80, "CORAL"},       
+{173, 216, 230, "SKYBLUE"},   
+{50, 205, 50, "LIME"},       
+{25, 25, 112, "MIDNIGHT"},
+{115, 99, 255, "PURPLE"},
+{0, 255, 0, "GREEN"},
+{0, 128, 255, "BLUE"},
+{235, 146, 52, "ORANGE"},
+{255, 221, 0, "YELLOW"},
+{255, 0, 0, "RED"},
+{111, 227, 175, "MINT"},
+{255, 255, 255, "WHITE"},
+{255, 128, 234, "PINK"},
+{221, 0, 255, "MAGENTA"},
+{0, 0, 0, "BLACK"}
+};
 
 
 void putpixel(int x, int y, uint32_t color) {
@@ -64,16 +76,13 @@ void drawchar(unsigned char c, int x, int y, uint8_t r, uint8_t g, uint8_t b) {
 
 void putString(char *str) {
   for (int i = 0; str[i] != '\0'; i++) {
-    drawchar(str[i], cursorCol * CHAR_WIDTH, cursorRow * CHAR_HEIGHT, red, green, blue);
+    drawchar(str[i], cursorCol * CHAR_WIDTH, cursorRow * CHAR_HEIGHT, foreRed, foreGreen, foreBlue);
 
     cursorCol++;
   }
 }
 
 void putArgbString(char *str, int r, int g, int b);
-int red = 255;
-int blue = 255;
-int green = 255;
 void prompt(int row);
 void newLine(void);
 
@@ -91,7 +100,7 @@ void fillrect(uint8_t *vram, uint8_t r, uint8_t g, uint8_t b, uint32_t x,
 }
 
 void clearScreen() {
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   cursorRow = 0;
   cursorCol = 0;
@@ -154,7 +163,7 @@ void putStringl(char *str) {
 }
 
 void clearChar(int row, int col) {
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, col * CHAR_WIDTH, row * CHAR_HEIGHT,
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, col * CHAR_WIDTH, row * CHAR_HEIGHT,
            CHAR_WIDTH, CHAR_HEIGHT);
 }
 
@@ -168,47 +177,47 @@ void prompt(int row) {
 }
 void splash() {
   // P
-  fillrect((uint8_t *)framebuffer, red, green, blue, 1, 1, 30, 24);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 11, 4, 10, 18);
-  fillrect((uint8_t *)framebuffer, red, green, blue, 1, 25, 10, 11);
+  fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 1, 1, 30, 24);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 11, 4, 10, 18);
+  fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 1, 25, 10, 11);
   // A
-  fillrect((uint8_t *)framebuffer, red, green, blue, 33, 8, 21, 28);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 41, 11, 5, 11);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 41, 25, 5, 11);
+  fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 33, 8, 21, 28);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 41, 11, 5, 11);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 41, 25, 5, 11);
   // R
-  fillrect((uint8_t *)framebuffer, red, green, blue, 56, 8, 21, 28);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 64, 11, 5, 11);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 64, 25, 5, 11);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 74, 27, 3, 4);
+  fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 56, 8, 21, 28);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 64, 11, 5, 11);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 64, 25, 5, 11);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 74, 27, 3, 4);
   // A
-  fillrect((uint8_t *)framebuffer, red, green, blue, 79, 8, 21, 28);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 87, 11, 5, 11);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 87, 25, 5, 11);
+  fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 79, 8, 21, 28);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 87, 11, 5, 11);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 87, 25, 5, 11);
   // D
-  fillrect((uint8_t *)framebuffer, red, green, blue, 102, 8, 21, 28);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 119, 8, 4, 4);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 119, 32, 4, 4);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 108, 11, 7, 22);
+  fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 102, 8, 21, 28);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 119, 8, 4, 4);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 119, 32, 4, 4);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 108, 11, 7, 22);
   // O
-  fillrect((uint8_t *)framebuffer, red, green, blue, 125, 8, 21, 28);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 133, 11, 5, 22);
+  fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 125, 8, 21, 28);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 133, 11, 5, 22);
   // X
-  fillrect((uint8_t *)framebuffer, red, green, blue, 148, 8, 21, 28);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 156, 8, 5, 12);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 157, 20, 3, 2);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 157, 25, 3, 3);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 156, 28, 5, 8);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 148, 20, 1, 8);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 149, 22, 1, 4);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 168, 20, 1, 8);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 167, 22, 1, 4);
+  fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 148, 8, 21, 28);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 156, 8, 5, 12);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 157, 20, 3, 2);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 157, 25, 3, 3);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 156, 28, 5, 8);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 148, 20, 1, 8);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 149, 22, 1, 4);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 168, 20, 1, 8);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 167, 22, 1, 4);
   // O
-  fillrect((uint8_t *)framebuffer, red, green, blue, 171, 1, 30, 35);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 181, 4, 10, 29);
+  fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 171, 1, 30, 35);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 181, 4, 10, 29);
   // S
-  fillrect((uint8_t *)framebuffer, red, green, blue, 203, 1, 30, 35);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 213, 4, 20, 18);
-  fillrect((uint8_t *)framebuffer, 0, 0, 0, 203, 25, 20, 8);
+  fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, 203, 1, 30, 35);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 213, 4, 20, 18);
+  fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, 203, 25, 20, 8);
   cursorCol = 0;
   cursorRow = 3;
 }
@@ -234,10 +243,10 @@ void playBigRick() {
         int biggerx = (12 * x) + 160;
         int biggery = 12 * y;
         if (pixel) {
-          fillrect((uint8_t *)framebuffer, red, green, blue, biggerx, biggery,
+          fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, biggerx, biggery,
                    12, 12);
         } else {
-          fillrect((uint8_t *)framebuffer, 0, 0, 0, biggerx, biggery, 12, 12);
+          fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, biggerx, biggery, 12, 12);
         }
       }
     }
@@ -257,10 +266,10 @@ void playApple() {
         int biggerx = (12 * x) + 160;
         int biggery = 12 * y;
         if (pixel) {
-          fillrect((uint8_t *)framebuffer, red, green, blue, biggerx, biggery,
+          fillrect((uint8_t *)framebuffer, foreRed, foreGreen, foreBlue, biggerx, biggery,
                    12, 12);
         } else {
-          fillrect((uint8_t *)framebuffer, 0, 0, 0, biggerx, biggery, 12, 12);
+          fillrect((uint8_t *)framebuffer, backRed, backGreen, backBlue, biggerx, biggery, 12, 12);
         }
       }
     }

@@ -7,7 +7,7 @@
 #include "../kernel/kernel.h"
 char line[];
 multiboot_info_t *mbi;
-
+char parts[10][80];
 uint32_t *framebuffer;
 uint32_t fbWidth;
 uint32_t fbHeight;
@@ -16,6 +16,14 @@ uint8_t fbBpp;
 
 int cursorRow;
 int cursorCol;
+int foreRed = 255;
+int foreGreen = 255;
+int foreBlue = 255;
+int backRed = 0;
+int backGreen = 0;
+int backBlue = 0;
+
+extern struct colors colorList[];
 
 void kernel_main(uint32_t magic, uint32_t addr) {
   mbi = (multiboot_info_t *)addr;
@@ -25,19 +33,6 @@ void kernel_main(uint32_t magic, uint32_t addr) {
   fbHeight = (uint32_t)mbi->framebuffer_height;
   fbPitch = (uint32_t)mbi->framebuffer_pitch;
   fbBpp = (uint8_t)mbi->framebuffer_bpp;
-  struct colors {
-    int r;
-    int g;
-    int b;
-    char name[80];
-  };
-
-  struct colors colorList[10] = {
-      {115, 99, 255, "PURPLE"}, {0, 255, 0, "GREEN"},
-      {0, 128, 255, "BLUE"},    {235, 146, 52, "ORANGE"},
-      {255, 221, 0, "YELLOW"},  {255, 0, 0, "RED"},
-      {111, 227, 175, "MINT"},  {255, 255, 255, "WHITE"},
-      {255, 128, 234, "PINK"},  {221, 0, 255, "MAGENTA"}};
   splash();
 
   prompt(cursorRow);
@@ -63,12 +58,12 @@ void kernel_main(uint32_t magic, uint32_t addr) {
       readLine();
       newLine();
 
-      char parts[10][80];
       splitString(line, ',', parts);
 
       if (stringComp(line, "HELP")) {
         help();
         prompt(cursorRow);
+        partsClean();
         continue;
       }
 
@@ -76,18 +71,21 @@ void kernel_main(uint32_t magic, uint32_t addr) {
         clearScreen();
         splash();
         prompt(cursorRow);
+        partsClean();
         continue;
       }
 
       if (stringComp(parts[0], "LOGIN")) {
         login(parts[1], parts[2]);
         prompt(cursorRow);
+        partsClean();
         continue;
       }
 
       if (stringComp(parts[0], "USERCREATE")) {
         createUser(parts[1], parts[2]);
         prompt(cursorRow);
+        partsClean();
         continue;
       }
 
@@ -95,41 +93,49 @@ void kernel_main(uint32_t magic, uint32_t addr) {
         if (stringComp(parts[1], "LIST")) {
           listColor();
           prompt(cursorRow);
+          partsClean();
           continue;
         } else {
-          changeColor(parts[1]);
+          changeColor(parts[1],parts[2]);
           prompt(cursorRow);
+          partsClean();
           continue;
         }
       }
       if (stringComp(line, "WHOAMI")) {
         whoAmI();
         prompt(cursorRow);
+        partsClean();
         continue;
       }
       if (stringComp(line, "RICK")) {
         playBigRick();
         clearScreen();
         prompt(cursorRow);
+        partsClean();
         continue;
       }
       if (stringComp(line, "BADAPPLE")) {
         playApple();
         clearScreen();
         prompt(cursorRow);
+        partsClean();
         continue;
       }
 
       if (stringComp(line, "GFXINFO")) {
         gfxinfo();
         prompt(cursorRow);
+        partsClean();
         continue;
       } else {
         putString(line);
         putStringl(" is not recognised as an operable command");
         prompt(cursorRow);
+        partsClean();
         continue;
       }
+      
     }
 
     char letter = translate(scancode);

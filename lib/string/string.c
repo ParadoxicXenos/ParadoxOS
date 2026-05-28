@@ -4,6 +4,12 @@
 //====================================
 // STRING COMPARE
 //====================================
+extern char parts[10][80];
+void partsClean() {
+    for (int i = 0; i < 10; i++) {
+        parts[i][0] = '\0';
+    }
+}
 int stringComp(char a[], char b[]) {
   int i = 0;
 

@@ -28,7 +28,10 @@ struct colors {
   char name[80];
 };
 
-extern struct colors colorList[9];
-extern int red;
-extern int blue;
-extern int green;
+extern struct colors colorList[11];
+extern int foreRed;
+extern int foreBlue;
+extern int foreGreen;
+extern int backRed;
+extern int backBlue;
+extern int backGreen;

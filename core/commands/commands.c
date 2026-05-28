@@ -15,11 +15,15 @@ void help() {
   putStringl("LOGIN,[USERNAME],[PASSWORD] : Log into an account");
   putStringl("WHOAMI : Lists your accounts details.");
   putStringl("USERCREATE,[USERNAME],[PASSWORD] : Create an account");
-  putStringl("COLOR,[COLOR] : CHANGES PRINTING COLOR");
-  putStringl("COLOR,LIST : LISTS ALL AVAILABLE COLORS");
+  putStringl("COLOR,[FOREGROUND],[BACKGROUND] : Changes printing colors");
+  putStringl("COLOR,LIST : Lists all available colors");
+  putStringl("BADAPPLE : Plays badapple");
+  putStringl("RICK : Plays a 12 second clip of rick astley");
+  putStringl("GFXINFO : List graphical propeties");
+
 }
 
-//====================================
+//====================================LISTS ALL AVAILABLE COLORS
 // AUTH / USER COMMANDS
 //====================================
 void gfxinfo(){
@@ -55,26 +59,34 @@ void login(char userInput[], char passInput[]) {
   putStringl("Incorrect username or password.");
 }
 
-void changeColor(char color[]) {
-    for(int i = 0; i < 9; i++) {
+void changeColor(char foreground[],char background[]) {
+    for(int i = 0; i < 23; i++) {
 
-        if(stringComp(color, colorList[i].name)) {
+        if(stringComp(foreground, colorList[i].name)) {
 
-            red = colorList[i].r;
-            green = colorList[i].g;
-            blue = colorList[i].b;
+            foreRed = colorList[i].r;
+            foreGreen = colorList[i].g;
+            foreBlue = colorList[i].b;
 
-            putStringl("Color changed");            
-            return;
+            putStringl("Foreground Color changed");            
+        }
+        if(stringComp(background, colorList[i].name)) {
+
+            backRed = colorList[i].r;
+            backGreen = colorList[i].g;
+            backBlue = colorList[i].b;
+
+            putStringl("Background Color changed");           
+            clearScreen(); 
         }
     }
 
-    putStringl("Color not found");
 }
 void listColor() {
-  for(int i = 0; i < 10; i++) {
+  for(int i = 0; i < 23; i++) {
         putArgbStringl(colorList[i].name,colorList[i].r,colorList[i].g,colorList[i].b ); 
     }
+    putStringl("RUN : COLOR,[FOREGROUND],[BACKGROUND] TO CHANGE COLOR");
 }
 
 void whoAmI() {
