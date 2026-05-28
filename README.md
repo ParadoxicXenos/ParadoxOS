@@ -7,6 +7,8 @@ qemu-system-i386 \-cdrom ParadoxOS.iso \-m 512 \-serial stdio \-vga std
 
 
 PICTURES:
+
+
 <img width="587" height="209" alt="image" src="https://github.com/user-attachments/assets/33f24e0a-aecc-451e-9ca0-37dbca00258d" />
 <img width="116" height="97" alt="image" src="https://github.com/user-attachments/assets/8a83de6f-f4c2-4164-88c6-94681c2b3655" />
 <img width="493" height="258" alt="image" src="https://github.com/user-attachments/assets/5685b1eb-300c-4842-9343-a3b90f9f560c" />
